@@ -1,36 +1,34 @@
+# 1. Ensure version match
+!pip install scikit-learn==1.2.2
+
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import pickle
 from google.colab import files
 
-# 1. Generate the same realistic data
+# 2. Data Generation
 np.random.seed(42)
 n_rows = 200
 experience = np.random.randint(0, 20, n_rows)
 test_score = np.random.randint(4, 11, n_rows)
 interview_score = np.random.randint(4, 11, n_rows)
-
-# Formula with noise for ~73% accuracy
 noise = np.random.normal(0, 15000, n_rows) 
 salary = 35000 + (experience * 4200) + (test_score * 800) + (interview_score * 400) + noise
 
-df = pd.DataFrame({
+# 3. Training
+X = pd.DataFrame({
     'experience': experience,
     'test_score': test_score,
-    'interview_score': interview_score,
-    'salary': salary
+    'interview_score': interview_score
 })
-
-# 2. Train the model
-X = df[['experience', 'test_score', 'interview_score']]
-y = df['salary']
+y = salary
 model = LinearRegression()
 model.fit(X, y)
 
-# 3. Save and Download the binary file
+# 4. Save using the correct protocol
 with open('salary_model.pkl', 'wb') as f:
-    pickle.dump(model, f)
+    pickle.dump(model, f, protocol=4) # Using Protocol 4 for better compatibility
 
 files.download('salary_model.pkl')
-print("Model saved and downloading...")
+print("New model downloaded. Upload this to GitHub now.")
